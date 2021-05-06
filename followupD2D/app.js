@@ -21,6 +21,31 @@ catch(e) {
   // console.log(e)
 };
 
+var startRow = 2;
+var numRows = sheet.getLastRow();
+//headers
+var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+//check if the email sent column is present; if it is do nothing, else add it in there!
+if(headers.indexOf('EmailSent') > -1){
+
+}
+else{
+  
+  sheet.getRange(1,sheet.getLastColumn()+1).setValue('EmailSent')
+  
+}
+
+//specifying the index of the columns we will ultimately send out via email
+var emailIndex = headers.indexOf('Email');
+var emailSentIndex = headers.indexOf('EmailSent')
+//set our dataRange and grab the values
+//we need to find the last row and column similar to Excel where you go to the 
+//bottom and come up (or the right and come back left for columns)
+
+
+var dataRange = sheet.getRange(startRow,1,numRows,sheet.getLastColumn());
+var data_ = dataRange.getValues();
+
 
 class prepData{
   constructor(preppedData,distinctEmails){
@@ -30,29 +55,7 @@ class prepData{
   }
     prepareSheetsData() {
 
-      var startRow = 2;
-      var numRows = sheet.getLastRow();
-      //headers
-      var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
-      //check if the email sent column is present; if it is do nothing, else add it in there!
-      if(headers.indexOf('EmailSent') > -1){
-
-      }
-      else{
-        
-        sheet.getRange(1,sheet.getLastColumn()+1).setValue('EmailSent')
-        
-      }
-
-      //specifying the index of the columns we will ultimately send out via email
-      var emailIndex = headers.indexOf('Email');
-      //set our dataRange and grab the values
-      //we need to find the last row and column similar to Excel where you go to the 
-      //bottom and come up (or the right and come back left for columns)
       
-
-      var dataRange = sheet.getRange(startRow,1,numRows,sheet.getLastColumn());
-      var data_ = dataRange.getValues();
       //grab the emails column
       var emails =  sheet.getRange(startRow,emailIndex+1,numRows-1).getValues();  
       //flatten the two dimensional array 
@@ -99,31 +102,23 @@ function sendEmail() {
   var emailData_ = new prepData().prepareSheetsData();
   
   for (let k in emailData_){
-    console.log(`Printing each row from the email messages ${emailData_[k]}`);
+    // console.log(`Printing each row from the email messages ${emailData_[k]}`);
     var htmlBody_ = getEmailHtml(emailData_[k])
-    console.log(htmlBody_);
+    // console.log(htmlBody_);
     
-    MailApp.sendEmail({
-    to: k,
-    subject: "Evangelism Update and Follow Up",
+    // MailApp.sendEmail({
+    // to: k,
+    // subject: "Evangelism Update and Follow Up",
     
-    htmlBody: htmlBody_
-  });
+    // htmlBody: htmlBody_
+  // });
+    emailData_[k].forEach((row,index)=>{
+      console.log(`Row${row[1]}`)
+      sheet.getRange(row[1],emailSentIndex+1).setValue('1')
 
-  }
+
+    }
+
+  );
 };
-  
-
-  
-
-
-
-  
-
-
-
-
-
-
-
-
+};
