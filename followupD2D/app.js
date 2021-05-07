@@ -11,7 +11,9 @@ console.log(emailQuotaRemaining);
 
 //lets create some variables we may need globally
 var sheet = SpreadsheetApp.getActive().getSheetByName("evangelist_database");
+var customMessage_ = SpreadsheetApp.getActive().getRangeByName("input_custom_email_message!customMessage").getValue();
 
+console.log(customMessage_);
 //check the formURL from the linked google Doc
 try {
   const formURL = sheet.getFormUrl();
@@ -91,6 +93,7 @@ class prepData{
  function getEmailHtml(emailData) {
    
    var htmlTemplate = HtmlService.createTemplateFromFile("Template.html");
+   htmlTemplate.customMessage = customMessage_
    htmlTemplate.messages = emailData;
    var htmlBody = htmlTemplate.evaluate().getContent();
    return htmlBody;
@@ -104,14 +107,14 @@ function sendEmail() {
   for (let k in emailData_){
     // console.log(`Printing each row from the email messages ${emailData_[k]}`);
     var htmlBody_ = getEmailHtml(emailData_[k])
-    // console.log(htmlBody_);
+    console.log(htmlBody_);
     
-    // MailApp.sendEmail({
-    // to: k,
-    // subject: "Evangelism Update and Follow Up",
+    MailApp.sendEmail({
+    to: k,
+    subject: "Evangelism Update and Follow Up",
     
-    // htmlBody: htmlBody_
-  // });
+    htmlBody: htmlBody_
+  });
     emailData_[k].forEach((row,index)=>{
       console.log(`Row${row[1]}`)
       sheet.getRange(row[1],emailSentIndex+1).setValue('1')
